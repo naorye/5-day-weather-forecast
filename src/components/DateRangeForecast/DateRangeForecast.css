@@ -1,0 +1,9 @@
+.date-range-forecast {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.daily-forecast {
+  margin: 20px;
+}

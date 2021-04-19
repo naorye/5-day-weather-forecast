@@ -1,26 +1,45 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import { DateRangeForecast } from "./components/DateRangeForecast/DateRangeForecast";
+import { DailyForecast, getForecast } from "./services/getForecast";
+import { Spinner } from "./components/Spinner/Spinner";
+import { LongLatInput } from "./components/LongLatInput/LongLatInput";
+import "./App.css";
 
 function App() {
+  const [longitude, setLongitude] = useState("-74");
+  const [latitude, setLatitude] = useState("40");
+  const [error, setError] = useState<string>();
+  const [forecast, setForecast] = useState<DailyForecast[]>();
+
+  useEffect(() => {
+    setError(undefined);
+    setTimeout(() => {
+      getForecast(longitude, latitude)
+        .then((forecast) => {
+          setForecast(forecast);
+        })
+        .catch((error: Error) => {
+          setError(error.message);
+        });
+    }, 1000);
+  }, [longitude, latitude]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <h1>5-day weather forecast</h1>
+
+      <LongLatInput
+        longitude={longitude}
+        latitude={latitude}
+        onLongitudeChange={setLongitude}
+        onLatitudeChange={setLatitude}
+      />
+
+      {error && error}
+
+      {forecast ? <DateRangeForecast forecast={forecast} /> : <Spinner />}
     </div>
   );
 }
 
-export default App;
+export { App };
